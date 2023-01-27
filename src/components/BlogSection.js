@@ -22,11 +22,11 @@ const BlogSection = ({ blogs, user }) => {
               <h6 className="category catg-color">{item.category}</h6>
               <span className="title py-2">{item.title}</span>
               <span className="meta-info">
-                <p className="author">{item.author}</p>
-                {item.timeStamp.toDate().toDateString()}
+                <p className="author">{item.author}</p> - &nbsp;
+                {item.timestamp.toDate().toDateString()}
               </span>
             </div>
-            <div className="short-description">
+            <div className="short-description text-start">
               {excerpt(item.description, 120)}
             </div>
             <button className="btn btn-read">Read More</button>
