@@ -8,8 +8,10 @@ import {
   doc,
   getDoc,
   serverTimestamp,
+  updateDoc,
 } from "firebase/firestore";
 import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const initialState = {
   title: "",
@@ -59,6 +61,7 @@ const AddEditBlog = ({ user, setActive }) => {
         },
         () => {
           getDownloadURL(uploadTask.snapshot.ref).then((downloadUrl) => {
+            toast.info("Image uploaded successfully!");
             setForm((prev) => ({ ...prev, imgUrl: downloadUrl }));
           });
         }
@@ -101,17 +104,35 @@ const AddEditBlog = ({ user, setActive }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (category && tags && title && file && description && trending) {
-      try {
-        await addDoc(collection(db, "blogs"), {
-          ...form,
-          timestamp: serverTimestamp(),
-          author: user.displayName,
-          userId: user.uid,
-        });
-      } catch (err) {
-        console.log(err);
+    if (category && tags && title && description && trending) {
+      if (!id) {
+        try {
+          await addDoc(collection(db, "blogs"), {
+            ...form,
+            timestamp: serverTimestamp(),
+            author: user.displayName,
+            userId: user.uid,
+          });
+          toast.success("Blog created successfully");
+        } catch (err) {
+          console.log(err);
+        }
       }
+      else {
+        try {
+          await updateDoc(doc(db, "blogs", id), {
+            ...form,
+            timestamp: serverTimestamp(),
+            author: user.displayName,
+            userId: user.uid,
+          });
+          toast.success("Blog updated successfully");
+        } catch (err) {
+          console.log(err);
+        }
+      }
+    } else {
+      return toast.error("All fields are mandatory to fill!!");
     }
     navigate("/");
   };
