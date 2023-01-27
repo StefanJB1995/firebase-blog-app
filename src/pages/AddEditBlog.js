@@ -2,9 +2,14 @@ import React, { useState, useEffect } from "react";
 import ReactTagInput from "@pathofdev/react-tag-input";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { db, storage } from "../firebase";
-import { async } from "@firebase/util";
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
-import { useNavigate } from "react-router-dom";
+import {
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  serverTimestamp,
+} from "firebase/firestore";
+import { useNavigate, useParams } from "react-router-dom";
 
 const initialState = {
   title: "",
@@ -16,10 +21,12 @@ const initialState = {
 
 const categoryOption = ["Bible Study", "Music", "Relatioships", "Books"];
 
-const AddEditBlog = ({ user }) => {
+const AddEditBlog = ({ user, setActive }) => {
   const [form, setForm] = useState(initialState);
   const [file, setFile] = useState(null);
   const [progress, setProgress] = useState(null);
+
+  const { id } = useParams();
 
   const navigate = useNavigate();
 
@@ -61,6 +68,19 @@ const AddEditBlog = ({ user }) => {
     file && uploadFile();
   }, [file]);
 
+  useEffect(() => {
+    id && getBlogDetail();
+  }, [id]);
+
+  const getBlogDetail = async () => {
+    const docRef = doc(db, "blogs", id);
+    const snapshot = await getDoc(docRef);
+    if (snapshot.exists()) {
+      setForm({ ...snapshot.data() });
+    }
+    setActive(null);
+  };
+
   console.log("form", form);
 
   const handleChange = (e) => {
@@ -100,7 +120,9 @@ const AddEditBlog = ({ user }) => {
     <div className="container-fluid mb-4">
       <div className="container">
         <div className="col-12">
-          <div className="text-center heading py-2">Create Blog</div>
+          <div className="text-center heading py-2">
+            {id ? "Update Blog" : "Create Blog"}
+          </div>
         </div>
         <div className="row h-100 justify-content-center align-items-center">
           <div className="col-10 col-md-8 col-lg-6">
@@ -186,7 +208,7 @@ const AddEditBlog = ({ user }) => {
                   type="submit"
                   disabled={progress !== null && progress < 100}
                 >
-                  Submit
+                  {id ? "Update" : "Submit"}
                 </button>
               </div>
             </form>
