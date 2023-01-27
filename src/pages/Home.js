@@ -17,7 +17,7 @@ const Home = ({ setActive, user }) => {
         snapshot.docs.forEach((doc) => {
           list.push({ id: doc.id, ...doc.data() });
         });
-        setBlogs(list);
+        setBlogs(list.reverse());
         setLoading(false);
         setActive("home");
       },

@@ -117,8 +117,7 @@ const AddEditBlog = ({ user, setActive }) => {
         } catch (err) {
           console.log(err);
         }
-      }
-      else {
+      } else {
         try {
           await updateDoc(doc(db, "blogs", id), {
             ...form,
@@ -162,6 +161,7 @@ const AddEditBlog = ({ user, setActive }) => {
                 <ReactTagInput
                   tags={tags}
                   placeholder="Tags"
+                  removeOnBackspace
                   onChange={handleTags}
                 />
               </div>
