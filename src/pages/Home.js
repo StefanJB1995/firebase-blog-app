@@ -2,6 +2,7 @@ import { collection, onSnapshot, deleteDoc, doc } from "firebase/firestore";
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import BlogSection from "../components/BlogSection";
+import MostPopular from "../components/MostPopular";
 import Spinner from "../components/Spinner";
 import Tags from "../components/Tags";
 import { db } from "../firebase";
@@ -23,8 +24,8 @@ const Home = ({ setActive, user }) => {
         });
         const uniqueTags = [...new Set(tags)];
         setTags(uniqueTags);
-        //setBlogs(list);
-        setBlogs(list.reverse());
+        setBlogs(list);
+        //setBlogs(list.reverse());
         setLoading(false);
         setActive("home");
       },
@@ -71,7 +72,7 @@ const Home = ({ setActive, user }) => {
           </div>
           <div className="col-md-3">
             <Tags tags={tags} />
-            <h2>Most Popular</h2>
+            <MostPopular blogs={blogs} />
           </div>
         </div>
       </div>
