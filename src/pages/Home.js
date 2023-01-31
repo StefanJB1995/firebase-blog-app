@@ -23,8 +23,8 @@ const Home = ({ setActive, user }) => {
         });
         const uniqueTags = [...new Set(tags)];
         setTags(uniqueTags);
-        setBlogs(list);
-        //setBlogs(list.reverse());
+        //setBlogs(list);
+        setBlogs(list.reverse());
         setLoading(false);
         setActive("home");
       },
