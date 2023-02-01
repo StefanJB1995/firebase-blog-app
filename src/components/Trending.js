@@ -8,7 +8,7 @@ const Trending = ({ blogs }) => {
   const options = {
     loop: true,
     margin: 10,
-    new: true,
+    nav: true,
     responsive: {
       0: {
         items: 1,
@@ -29,7 +29,7 @@ const Trending = ({ blogs }) => {
       <div>
         <div className="blog-heading text-start py-2 mb-4">Trending</div>
       </div>
-      <OwlCarousel className="owl=theme" {...options}>
+      <OwlCarousel className="owl-theme" {...options}>
         {blogs?.map((item) => (
           <div className="item px-2" key={item.id}>
             <Link to={`/detail/${item.id}`}>
