@@ -1,18 +1,40 @@
-import { collection, onSnapshot, deleteDoc, doc } from "firebase/firestore";
+import {
+  collection,
+  onSnapshot,
+  deleteDoc,
+  doc,
+  query,
+  where,
+  getDocs,
+} from "firebase/firestore";
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import BlogSection from "../components/BlogSection";
 import MostPopular from "../components/MostPopular";
 import Spinner from "../components/Spinner";
 import Tags from "../components/Tags";
+import Trending from "../components/Trending";
 import { db } from "../firebase";
 
 const Home = ({ setActive, user }) => {
   const [loading, setLoading] = useState(true);
   const [blogs, setBlogs] = useState([]);
   const [tags, setTags] = useState([]);
+  const [trendings, setTrendings] = useState([]);
+
+  const getTrendingBlogs = async () => {
+    const blogRef = collection(db, "blogs");
+    const trendQuery = query(blogRef, where("trending", "==", "yes"));
+    const querySnapshot = await getDocs(trendQuery);
+    let trendBlogs = [];
+    querySnapshot.forEach((doc) => {
+      trendBlogs.push({ id: doc.id, ...doc.data() });
+    });
+    setTrendings(trendBlogs);
+  };
 
   useEffect(() => {
+    getTrendingBlogs();
     const unsub = onSnapshot(
       collection(db, "blogs"),
       (snapshot) => {
@@ -36,6 +58,7 @@ const Home = ({ setActive, user }) => {
 
     return () => {
       unsub();
+      getTrendingBlogs();
     };
   }, []);
 
@@ -62,7 +85,7 @@ const Home = ({ setActive, user }) => {
     <div className="container-fluid pb-4 pt-4 padding">
       <div className="container padding">
         <div className="row mx-0">
-          <h2>Trending</h2>
+          <Trending blogs={trendings} />
           <div className="col-md-8">
             <BlogSection
               blogs={blogs}
