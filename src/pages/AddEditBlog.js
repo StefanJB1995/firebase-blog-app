@@ -84,7 +84,7 @@ const AddEditBlog = ({ user, setActive }) => {
     setActive(null);
   };
 
-  console.log("form", form);
+  //console.log("form", form);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
