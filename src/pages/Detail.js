@@ -14,6 +14,19 @@ const Detail = ({ setActive }) => {
   const getBlogDetail = async () => {
     const docRef = doc(db, "blogs", id);
     const blogDetail = await getDoc(docRef);
+
+    //let obj = blogDetail.data()
+    // let des = obj.description;
+    // if(des.includes("  ")){
+    //   console.log("It contains double space")
+    //   let newDes = des.replace("  ", "\n");
+
+    //   obj.description = newDes;
+    //   console.log("new descriptions is", newDes);
+    // }
+
+    //setBlog(obj);
+
     setBlog(blogDetail.data());
     setActive(null);
   };
@@ -38,7 +51,7 @@ const Detail = ({ setActive }) => {
                 By <p className="author">{blog?.author}</p> -&nbsp;
                 {blog?.timestamp.toDate().toDateString()}
               </span>
-              <p className="text-start">{blog?.description}</p>
+              <p className="text-start desc">{blog?.description}</p>
             </div>
             <div className="col-md-3">
               <h2>Tags</h2>
