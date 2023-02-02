@@ -6,11 +6,14 @@ import {
   query,
   where,
   getDocs,
+  orderBy,
 } from "firebase/firestore";
+import { isEmpty } from "lodash";
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import BlogSection from "../components/BlogSection";
 import MostPopular from "../components/MostPopular";
+import Search from "../components/Search";
 import Spinner from "../components/Spinner";
 import Tags from "../components/Tags";
 import Trending from "../components/Trending";
@@ -20,6 +23,7 @@ const Home = ({ setActive, user }) => {
   const [loading, setLoading] = useState(true);
   const [blogs, setBlogs] = useState([]);
   const [tags, setTags] = useState([]);
+  const [search, setSearch] = useState("");
   const [trendings, setTrendings] = useState([]);
 
   const getTrendingBlogs = async () => {
@@ -79,7 +83,22 @@ const Home = ({ setActive, user }) => {
     }
   };
 
- // console.log("blogs", blogs);
+  const getBlogs = async () => {
+    const blogRef = collection(db, "blogs");
+    const blogsQuery = query(blogRef, orderBy("title"));
+    const docSnapshot = await getDocs(blogsQuery);
+    setBlogs(docSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+  };
+
+  const handleChange = (e) => {
+    const { value } = e.target;
+    if (isEmpty(value)) {
+      getBlogs();
+    }
+    setSearch(value);
+  };
+
+  // console.log("blogs", blogs);
 
   return (
     <div className="container-fluid pb-4 pt-4 padding">
@@ -94,6 +113,7 @@ const Home = ({ setActive, user }) => {
             />
           </div>
           <div className="col-md-3">
+            <Search search={search} handleChange={handleChange} />
             <Tags tags={tags} />
             <MostPopular blogs={blogs} />
           </div>
