@@ -15,6 +15,7 @@ import Auth from "./pages/Auth";
 import { auth } from "./firebase";
 import { signOut } from "firebase/auth";
 import TagBlog from "./pages/TagBlog";
+import CategoryBlog from "./pages/CategoryBlog";
 
 function App() {
   const [active, setActive] = useState("home");
@@ -66,6 +67,7 @@ function App() {
           }
         />
         <Route path="/tag/:tag" element={<TagBlog />} />
+        <Route path="/category/:category" element={<CategoryBlog />} />
         <Route path="/about" element={<About />} />
         <Route path="/auth" element={<Auth setActive={setActive} setUser={setUser} />} />
         <Route path="*" element={<NotFound />} />
