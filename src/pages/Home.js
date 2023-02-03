@@ -7,6 +7,8 @@ import {
   where,
   getDocs,
   orderBy,
+  limit,
+  startAfter,
 } from "firebase/firestore";
 import { isEmpty, isNull } from "lodash";
 import React, { useState, useEffect } from "react";
@@ -31,6 +33,7 @@ const Home = ({ setActive, user, active }) => {
   const [tags, setTags] = useState([]);
   const [search, setSearch] = useState("");
   const [trendings, setTrendings] = useState([]);
+  const [lastVisible, setLastVisible] = useState(null);
   const queryString = useQuery();
   const searchQuery = queryString.get("searchQuery");
   const location = useLocation();
@@ -62,7 +65,8 @@ const Home = ({ setActive, user, active }) => {
         });
         const uniqueTags = [...new Set(tags)];
         setTags(uniqueTags);
-        setBlogs(list);
+        //setBlogs(list);
+
         //setBlogs(list.reverse());
         setLoading(false);
         setActive("home");
@@ -79,11 +83,49 @@ const Home = ({ setActive, user, active }) => {
   }, [setActive, active]);
 
   useEffect(() => {
+    getBlogs();
+  }, [active]);
+
+  useEffect(() => {
     if (!isNull(searchQuery)) {
       //isNull is from package lodash
       searchBlogs();
     }
   }, [searchQuery]);
+
+  const getBlogs = async () => {
+    const blogRef = collection(db, "blogs");
+    const firstFour = query(blogRef, orderBy("title"), limit(4));
+    // const blogsQuery = query(blogRef, orderBy("title"));
+    //const docSnapshot = await getDocs(blogRef);
+    const docSnapshot = await getDocs(firstFour);
+    setBlogs(docSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+    setLastVisible(docSnapshot.doc[docSnapshot.docs.length - 1])
+  };
+
+  const updateState = (docSnapshot) => {
+    const isCollectionEmpty = docSnapshot.size === 0;
+    if(!isCollectionEmpty) {
+      const blogsData = docSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data()
+      }))
+      setBlogs((blogs) => [...blogs, ...blogsData]);
+      setLastVisible(docSnapshot.docs[docSnapshot.docs.length - 1])
+    } else {
+      toast.info("No more blogs to display");
+    }
+  }
+
+  const fetchMore = async () => {
+    setLoading(true);
+    const blogRef = collection(db, "blogs");
+    const nextFour = query(blogRef, orderBy("title"), limit(4), startAfter(lastVisible));
+    const docSnapshot = await getDocs(nextFour);
+    updateState(docSnapshot);
+    setLoading(false);
+  };
+
 
   if (loading) {
     return <Spinner />;
@@ -128,13 +170,6 @@ const Home = ({ setActive, user, active }) => {
     }
   };
 
-  const getBlogs = async () => {
-    const blogRef = collection(db, "blogs");
-    // const blogsQuery = query(blogRef, orderBy("title"));
-    const docSnapshot = await getDocs(blogRef);
-    setBlogs(docSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
-  };
-
   const handleChange = (e) => {
     const { value } = e.target;
     if (isEmpty(value)) {
@@ -155,7 +190,7 @@ const Home = ({ setActive, user, active }) => {
             {blogs.length === 0 && location.pathname !== "/" && (
               <>
                 <h4>
-                  No Blog Found with this search keyword: {" "}
+                  No Blog Found with this search keyword:{" "}
                   <strong>{searchQuery}</strong>
                 </h4>
               </>
@@ -165,6 +200,9 @@ const Home = ({ setActive, user, active }) => {
               user={user}
               handleDelete={handleDelete}
             />
+            <button className="btn btn-primary" onClick={fetchMore}>
+              Load More
+            </button>
           </div>
           <div className="col-md-3">
             <Search search={search} handleChange={handleChange} />
