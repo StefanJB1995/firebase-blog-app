@@ -33,6 +33,7 @@ const Home = ({ setActive, user, active }) => {
   const [tags, setTags] = useState([]);
   const [search, setSearch] = useState("");
   const [trendings, setTrendings] = useState([]);
+  const [totalBlogs, setTotalBlogs] = useState(null);
   const [lastVisible, setLastVisible] = useState(null);
   const [hide, setHide] = useState(false);
   const queryString = useQuery();
@@ -66,6 +67,7 @@ const Home = ({ setActive, user, active }) => {
         });
         const uniqueTags = [...new Set(tags)];
         setTags(uniqueTags);
+        setTotalBlogs(list);
         //setBlogs(list);
 
         //setBlogs(list.reverse());
@@ -188,6 +190,26 @@ const Home = ({ setActive, user, active }) => {
   };
 
   // console.log("blogs", blogs);
+
+  //category count
+  const counts = totalBlogs.reduce((prevValue, currentValue) => {
+    let name = currentValue.category;
+    if (!prevValue.hasOwnProperty(name)) {
+      prevValue[name] = 0;
+    }
+    prevValue[name]++;
+    delete prevValue["undefined"];
+    return prevValue;
+  }, {});
+
+  const categoryCount = Object.keys(counts).map((k) => {
+    return {
+      category: k,
+      count: counts[k],
+    };
+  });
+
+  console.log("catCount", categoryCount);
 
   return (
     <div className="container-fluid pb-4 pt-4 padding">
