@@ -7,7 +7,6 @@ const BlogSection = ({ blogs, user, handleDelete }) => {
   const userId = user?.uid;
   return (
     <div>
-      <div className="blog-heading text-start py-2 mb-4">Daily Blogs</div>
       {blogs?.map((item) => (
         <div className="row pb-4" key={item.id}>
           <div className="col-md-5">

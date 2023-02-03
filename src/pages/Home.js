@@ -25,7 +25,7 @@ function useQuery() {
   return new URLSearchParams(useLocation().search);
 }
 
-const Home = ({ setActive, user }) => {
+const Home = ({ setActive, user, active }) => {
   const [loading, setLoading] = useState(true);
   const [blogs, setBlogs] = useState([]);
   const [tags, setTags] = useState([]);
@@ -33,6 +33,7 @@ const Home = ({ setActive, user }) => {
   const [trendings, setTrendings] = useState([]);
   const queryString = useQuery();
   const searchQuery = queryString.get("searchQuery");
+  const location = useLocation();
 
   const getTrendingBlogs = async () => {
     const blogRef = collection(db, "blogs");
@@ -47,6 +48,9 @@ const Home = ({ setActive, user }) => {
 
   useEffect(() => {
     getTrendingBlogs();
+
+    setSearch("");
+
     const unsub = onSnapshot(
       collection(db, "blogs"),
       (snapshot) => {
@@ -72,7 +76,7 @@ const Home = ({ setActive, user }) => {
       unsub();
       getTrendingBlogs();
     };
-  }, [setActive]);
+  }, [setActive, active]);
 
   useEffect(() => {
     if (!isNull(searchQuery)) {
@@ -88,7 +92,10 @@ const Home = ({ setActive, user }) => {
   const searchBlogs = async () => {
     const blogRef = collection(db, "blogs");
     const searchTitleQuery = query(blogRef, where("title", "==", searchQuery));
-    const searchTagQuery = query(blogRef, where("tags", "array-contains", searchQuery));
+    const searchTagQuery = query(
+      blogRef,
+      where("tags", "array-contains", searchQuery)
+    );
     const titleSnapshot = await getDocs(searchTitleQuery);
     const tagSnapshot = await getDocs(searchTagQuery);
 
@@ -105,6 +112,7 @@ const Home = ({ setActive, user }) => {
     const combinedSearchBlogs = searchTitleBlogs.concat(searchTagBlogs);
 
     setBlogs(combinedSearchBlogs);
+    setActive("");
   };
 
   const handleDelete = async (id) => {
@@ -143,6 +151,15 @@ const Home = ({ setActive, user }) => {
         <div className="row mx-0">
           <Trending blogs={trendings} />
           <div className="col-md-8">
+            <div className="blog-heading text-start py-2 mb-4">Daily Blogs</div>
+            {blogs.length === 0 && location.pathname !== "/" && (
+              <>
+                <h4>
+                  No Blog Found with this search keyword: {" "}
+                  <strong>{searchQuery}</strong>
+                </h4>
+              </>
+            )}
             <BlogSection
               blogs={blogs}
               user={user}
