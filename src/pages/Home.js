@@ -88,12 +88,23 @@ const Home = ({ setActive, user }) => {
   const searchBlogs = async () => {
     const blogRef = collection(db, "blogs");
     const searchTitleQuery = query(blogRef, where("title", "==", searchQuery));
+    const searchTagQuery = query(blogRef, where("tags", "array-contains", searchQuery));
     const titleSnapshot = await getDocs(searchTitleQuery);
+    const tagSnapshot = await getDocs(searchTagQuery);
+
     let searchTitleBlogs = [];
+    let searchTagBlogs = [];
+
     titleSnapshot.forEach((doc) => {
       searchTitleBlogs.push({ id: doc.id, ...doc.data() });
     });
-    setBlogs(searchTitleBlogs);
+    tagSnapshot.forEach((doc) => {
+      searchTagBlogs.push({ id: doc.id, ...doc.data() });
+    });
+
+    const combinedSearchBlogs = searchTitleBlogs.concat(searchTagBlogs);
+
+    setBlogs(combinedSearchBlogs);
   };
 
   const handleDelete = async (id) => {
