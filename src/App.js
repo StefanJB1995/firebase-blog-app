@@ -14,6 +14,7 @@ import Header from "./components/Header";
 import Auth from "./pages/Auth";
 import { auth } from "./firebase";
 import { signOut } from "firebase/auth";
+import TagBlog from "./pages/TagBlog";
 
 function App() {
   const [active, setActive] = useState("home");
@@ -64,6 +65,7 @@ function App() {
             user?.uid ? <AddEditBlog user={user} setActive={setActive}/> : <Navigate to="/" />
           }
         />
+        <Route path="/tag/:tag" element={<TagBlog />} />
         <Route path="/about" element={<About />} />
         <Route path="/auth" element={<Auth setActive={setActive} setUser={setUser} />} />
         <Route path="*" element={<NotFound />} />
