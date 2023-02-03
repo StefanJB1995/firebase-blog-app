@@ -22,6 +22,7 @@ import Trending from "../components/Trending";
 import { db } from "../firebase";
 import { useLocation } from "react-router-dom";
 import { async } from "@firebase/util";
+import Category from "../components/Category";
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -244,6 +245,7 @@ const Home = ({ setActive, user, active }) => {
           <div className="col-md-3">
             <Search search={search} handleChange={handleChange} />
             <Tags tags={tags} />
+            <Category catgBlogsCount={categoryCount}/>
             <MostPopular blogs={blogs} />
           </div>
         </div>
