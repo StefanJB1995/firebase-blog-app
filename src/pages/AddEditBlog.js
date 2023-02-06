@@ -19,6 +19,8 @@ const initialState = {
   trending: "no",
   category: "",
   description: "",
+  comments: [],
+  likes: [],
 };
 
 const categoryOption = ["Bible Study", "Music", "Relatioships", "Books"];

@@ -7,11 +7,13 @@ import {
   query,
   where,
 } from "firebase/firestore";
+import { isEmpty } from "lodash";
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import MostPopular from "../components/MostPopular";
 import RelatedBlog from "../components/RelatedBlog";
 import Tags from "../components/Tags";
+import UserComments from "../components/UserComments";
 import { db } from "../firebase";
 
 const Detail = ({ setActive }) => {
@@ -20,6 +22,7 @@ const Detail = ({ setActive }) => {
   const [relatedBlogs, setRelatedBlogs] = useState([]);
   const [blogs, setBlogs] = useState([]);
   const [tags, setTags] = useState([]);
+  const [comments, setComments] = useState([]);
 
   useEffect(() => {
     const getBlogsData = async () => {
@@ -49,6 +52,9 @@ const Detail = ({ setActive }) => {
       blogRef,
       where("tags", "array-contains-any", blogDetail.data().tags, limit(3))
     );
+
+    setComments(blogDetail.data().comments ? blogDetail.data().comments : []);
+
     const relatedBlogsSnapshot = await getDocs(relatedBlogsQuery);
     const relatedBlogs = [];
     relatedBlogsSnapshot.forEach((doc) => {
@@ -82,6 +88,23 @@ const Detail = ({ setActive }) => {
               <p className="text-start desc">{blog?.description}</p>
               <div className="text-start">
                 <Tags tags={blog?.tags} />
+              </div>
+              <br />
+              <div className="custombox">
+                <h4 className="small-title">
+                  {blog?.comments?.length} Comments
+                </h4>
+                {isEmpty(comments) ? (
+                  <UserComments
+                    msg={"No comments yet. Be the first to comment!"}
+                  />
+                ) : (
+                  <>
+                    {comments?.map((comment) => (
+                      <UserComments {...comment} />
+                    ))}
+                  </>
+                )}
               </div>
             </div>
             <div className="col-md-3">
