@@ -15,6 +15,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import CommentBox from "../components/CommentBox";
+import Like from "../components/Like";
 import MostPopular from "../components/MostPopular";
 import RelatedBlog from "../components/RelatedBlog";
 import Tags from "../components/Tags";
@@ -30,6 +31,7 @@ const Detail = ({ setActive, user }) => {
   const [tags, setTags] = useState([]);
   const [comments, setComments] = useState([]);
   const [userComment, setUserComment] = useState("");
+  const [likes, setLikes] = useState([]);
 
   useEffect(() => {
     const getBlogsData = async () => {
@@ -61,6 +63,7 @@ const Detail = ({ setActive, user }) => {
     );
 
     setComments(blogDetail.data().comments ? blogDetail.data().comments : []);
+    setLikes(blogDetail.data().likes ? blogDetail.data().likes : []);
 
     const relatedBlogsSnapshot = await getDocs(relatedBlogsQuery);
     const relatedBlogs = [];
@@ -90,6 +93,8 @@ const Detail = ({ setActive, user }) => {
     setUserComment("");
   };
 
+  const handleLike = async () => {};
+
   return (
     <div className="single">
       <div
@@ -109,6 +114,7 @@ const Detail = ({ setActive, user }) => {
               <span className="meta-info text-start">
                 By <p className="author">{blog?.author}</p> -&nbsp;
                 {blog?.timestamp.toDate().toDateString()}
+                <Like handleLike={handleLike} likes={likes} userId={userId} />
               </span>
               <p className="text-start desc">{blog?.description}</p>
               <div className="text-start">
@@ -116,9 +122,7 @@ const Detail = ({ setActive, user }) => {
               </div>
               <br />
               <div className="custombox">
-                <h4 className="small-title">
-                  {comments?.length} Comments
-                </h4>
+                <h4 className="small-title">{comments?.length} Comments</h4>
                 {isEmpty(comments) ? (
                   <UserComments
                     msg={"No comments yet. Be the first to comment!"}
