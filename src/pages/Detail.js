@@ -80,8 +80,12 @@ const Detail = ({ setActive }) => {
                 {blog?.timestamp.toDate().toDateString()}
               </span>
               <p className="text-start desc">{blog?.description}</p>
+              <div className="text-start">
+                <Tags tags={blog?.tags} />
+              </div>
             </div>
             <div className="col-md-3">
+              <div className="blog-heading text-start py-2 mb-4">Tags</div>
               <Tags tags={tags} />
               <MostPopular blogs={blogs} />
             </div>
