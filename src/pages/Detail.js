@@ -10,6 +10,7 @@ import {
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import MostPopular from "../components/MostPopular";
+import RelatedBlog from "../components/RelatedBlog";
 import Tags from "../components/Tags";
 import { db } from "../firebase";
 
@@ -85,9 +86,7 @@ const Detail = ({ setActive }) => {
               <MostPopular blogs={blogs} />
             </div>
           </div>
-          <div>
-            Related Blogs
-          </div>
+          <RelatedBlog id={id} blogs={relatedBlogs} />
         </div>
       </div>
     </div>
