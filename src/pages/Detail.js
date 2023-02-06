@@ -5,11 +5,15 @@ import {
   getDocs,
   limit,
   query,
+  serverTimestamp,
+  Timestamp,
+  updateDoc,
   where,
 } from "firebase/firestore";
 import { isEmpty } from "lodash";
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import CommentBox from "../components/CommentBox";
 import MostPopular from "../components/MostPopular";
 import RelatedBlog from "../components/RelatedBlog";
@@ -25,7 +29,7 @@ const Detail = ({ setActive, user }) => {
   const [blogs, setBlogs] = useState([]);
   const [tags, setTags] = useState([]);
   const [comments, setComments] = useState([]);
-  const[userComment, setUserComment] = useState("");
+  const [userComment, setUserComment] = useState("");
 
   useEffect(() => {
     const getBlogsData = async () => {
@@ -68,9 +72,23 @@ const Detail = ({ setActive, user }) => {
     setActive(null);
   };
 
-  const handleComment = () => {
-
-  }
+  const handleComment = async (e) => {
+    e.preventDefault();
+    comments.push({
+      createdAt: Timestamp.fromDate(new Date()),
+      userId,
+      name: user?.displayName,
+      body: userComment,
+    });
+    toast.success("Comment posted successfully");
+    await updateDoc(doc(db, "blogs", id), {
+      ...blog,
+      comments,
+      timestamp: serverTimestamp(),
+    });
+    setComments(comments);
+    setUserComment("");
+  };
 
   return (
     <div className="single">
@@ -99,7 +117,7 @@ const Detail = ({ setActive, user }) => {
               <br />
               <div className="custombox">
                 <h4 className="small-title">
-                  {blog?.comments?.length} Comments
+                  {comments?.length} Comments
                 </h4>
                 {isEmpty(comments) ? (
                   <UserComments

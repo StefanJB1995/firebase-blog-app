@@ -65,7 +65,7 @@ const Header = ({ active, setActive, user, handleLogout }) => {
                     <>
                       <div className="profile-logo">
                         <img
-                          src="https://logos-world.net/wp-content/uploads/2021/11/World-Wrestling-Entertainment-WWE-Logo.png"
+                          src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
                           alt="logo"
                           style={{
                             width: "30px",
