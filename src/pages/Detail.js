@@ -10,19 +10,22 @@ import {
 import { isEmpty } from "lodash";
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import CommentBox from "../components/CommentBox";
 import MostPopular from "../components/MostPopular";
 import RelatedBlog from "../components/RelatedBlog";
 import Tags from "../components/Tags";
 import UserComments from "../components/UserComments";
 import { db } from "../firebase";
 
-const Detail = ({ setActive }) => {
+const Detail = ({ setActive, user }) => {
+  const userId = user?.uid;
   const { id } = useParams();
   const [blog, setBlog] = useState(null);
   const [relatedBlogs, setRelatedBlogs] = useState([]);
   const [blogs, setBlogs] = useState([]);
   const [tags, setTags] = useState([]);
   const [comments, setComments] = useState([]);
+  const[userComment, setUserComment] = useState("");
 
   useEffect(() => {
     const getBlogsData = async () => {
@@ -65,6 +68,10 @@ const Detail = ({ setActive }) => {
     setActive(null);
   };
 
+  const handleComment = () => {
+
+  }
+
   return (
     <div className="single">
       <div
@@ -106,6 +113,12 @@ const Detail = ({ setActive }) => {
                   </>
                 )}
               </div>
+              <CommentBox
+                userId={userId}
+                userComment={userComment}
+                setUserComment={setUserComment}
+                handleComment={handleComment}
+              />
             </div>
             <div className="col-md-3">
               <div className="blog-heading text-start py-2 mb-4">Tags</div>

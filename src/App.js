@@ -55,7 +55,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home setActive={setActive} active={active} user={user} />} />
         <Route path="/search" element={<Home setActive={setActive} user={user} />} />
-        <Route path="/detail/:id" element={<Detail setActive={setActive} />} />
+        <Route path="/detail/:id" element={<Detail setActive={setActive} user={user} />} />
         <Route
           path="/create"
           element={
