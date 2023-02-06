@@ -4,6 +4,7 @@ import {
   getDoc,
   getDocs,
   limit,
+  orderBy,
   query,
   serverTimestamp,
   Timestamp,
@@ -16,11 +17,12 @@ import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import CommentBox from "../components/CommentBox";
 import Like from "../components/Like";
-import MostPopular from "../components/MostPopular";
+import FeatureBlogs from "../components/FeatureBlogs";
 import RelatedBlog from "../components/RelatedBlog";
 import Tags from "../components/Tags";
 import UserComments from "../components/UserComments";
 import { db } from "../firebase";
+import Spinner from "../components/Spinner";
 
 const Detail = ({ setActive, user }) => {
   const userId = user?.uid;
@@ -32,29 +34,43 @@ const Detail = ({ setActive, user }) => {
   const [comments, setComments] = useState([]);
   const [userComment, setUserComment] = useState("");
   let [likes, setLikes] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const getBlogsData = async () => {
+    const getRecentBlogs = async () => {
       const blogRef = collection(db, "blogs");
-      const blogs = await getDocs(blogRef);
-      setBlogs(blogs.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
-      let tags = [];
-      blogs.docs.map((doc) => tags.push(...doc.get("tags")));
-      let uniqueTags = [...new Set(tags)];
-      setTags(uniqueTags);
+      const recentBlogs = query(
+        blogRef,
+        orderBy("timestamp", "desc"),
+        limit(5)
+      );
+      const docSnapshot = await getDocs(recentBlogs);
+      setBlogs(docSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
     };
 
-    getBlogsData();
+    getRecentBlogs();
   }, []);
 
   useEffect(() => {
     id && getBlogDetail();
   }, [id]);
 
+  if (loading) {
+    return <Spinner />;
+  }
+
   const getBlogDetail = async () => {
+    setLoading(true);
     const blogRef = collection(db, "blogs");
     const docRef = doc(db, "blogs", id);
     const blogDetail = await getDoc(docRef);
+    const blogs = await getDocs(blogRef);
+
+    let tags = [];
+    blogs.docs.map((doc) => tags.push(...doc.get("tags")));
+    let uniqueTags = [...new Set(tags)];
+    setTags(uniqueTags);
+
     setBlog(blogDetail.data());
 
     const relatedBlogsQuery = query(
@@ -73,6 +89,7 @@ const Detail = ({ setActive, user }) => {
     setRelatedBlogs(relatedBlogs);
 
     setActive(null);
+    setLoading(false);
   };
 
   const handleComment = async (e) => {
@@ -140,18 +157,20 @@ const Detail = ({ setActive, user }) => {
               </div>
               <br />
               <div className="custombox">
-                <h4 className="small-title">{comments?.length} Comments</h4>
-                {isEmpty(comments) ? (
-                  <UserComments
-                    msg={"No comments yet. Be the first to comment!"}
-                  />
-                ) : (
-                  <>
-                    {comments?.map((comment) => (
-                      <UserComments {...comment} />
-                    ))}
-                  </>
-                )}
+                <div className="scroll">
+                  <h4 className="small-title">{comments?.length} Comments</h4>
+                  {isEmpty(comments) ? (
+                    <UserComments
+                      msg={"No comments yet. Be the first to comment!"}
+                    />
+                  ) : (
+                    <>
+                      {comments?.map((comment) => (
+                        <UserComments {...comment} />
+                      ))}
+                    </>
+                  )}
+                </div>
               </div>
               <CommentBox
                 userId={userId}
@@ -163,7 +182,7 @@ const Detail = ({ setActive, user }) => {
             <div className="col-md-3">
               <div className="blog-heading text-start py-2 mb-4">Tags</div>
               <Tags tags={tags} />
-              <MostPopular blogs={blogs} />
+              <FeatureBlogs title={"Recent Blogs"} blogs={blogs} />
             </div>
           </div>
           <RelatedBlog id={id} blogs={relatedBlogs} />

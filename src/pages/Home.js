@@ -14,7 +14,7 @@ import { isEmpty, isNull } from "lodash";
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import BlogSection from "../components/BlogSection";
-import MostPopular from "../components/MostPopular";
+import FeatureBlogs from "../components/FeatureBlogs";
 import Search from "../components/Search";
 import Spinner from "../components/Spinner";
 import Tags from "../components/Tags";
@@ -247,7 +247,7 @@ const Home = ({ setActive, user, active }) => {
             <div className="blog-heading text-start py-2 mb-4">Tags</div>
             <Tags tags={tags} />
             <Category catgBlogsCount={categoryCount}/>
-            <MostPopular blogs={blogs} />
+            <FeatureBlogs title={"Most Popular"} blogs={blogs} />
           </div>
         </div>
       </div>
