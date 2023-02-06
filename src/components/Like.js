@@ -1,6 +1,16 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { Tooltip } from "bootstrap";
 
 const Like = ({ handleLike, likes, userId }) => {
+  useEffect(() => {
+    let tooltipTriggerList = [].slice.call(
+      document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    );
+    let tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new Tooltip(tooltipTriggerEl);
+    });
+  }, []);
+
   const LikeStatus = () => {
     if (likes?.length > 0) {
       return likes.find((id) => id === userId) ? (
@@ -17,7 +27,8 @@ const Like = ({ handleLike, likes, userId }) => {
     }
     return (
       <>
-        <i className="bi bi-hand-thumbs-up" />&nbsp;Like
+        <i className="bi bi-hand-thumbs-up" />
+        &nbsp;Like
       </>
     );
   };
