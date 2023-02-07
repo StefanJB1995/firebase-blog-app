@@ -17,6 +17,7 @@ import { signOut } from "firebase/auth";
 import TagBlog from "./pages/TagBlog";
 import CategoryBlog from "./pages/CategoryBlog";
 import ScrollToTop from "./components/ScrollToTop";
+import Blogs from "./pages/Blogs";
 
 function App() {
   const [active, setActive] = useState("home");
@@ -68,6 +69,7 @@ function App() {
             user?.uid ? <AddEditBlog user={user} setActive={setActive}/> : <Navigate to="/" />
           }
         />
+        <Route path="/blogs" element={<Blogs />} />
         <Route path="/tag/:tag" element={<TagBlog />} />
         <Route path="/category/:category" element={<CategoryBlog />} />
         <Route path="/about" element={<About />} />
