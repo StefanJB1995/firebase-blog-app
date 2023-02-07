@@ -30,6 +30,7 @@ function useQuery() {
 const Home = ({ setActive, user, active }) => {
   const [loading, setLoading] = useState(true);
   const [blogs, setBlogs] = useState([]);
+  const [mostPopularBlogs, setMostPopularBlogs] = useState([]);
   const [tags, setTags] = useState([]);
   const [search, setSearch] = useState("");
   const [trendings, setTrendings] = useState([]);
@@ -93,12 +94,15 @@ const Home = ({ setActive, user, active }) => {
 
   const getBlogs = async () => {
     const blogRef = collection(db, "blogs");
+
     //const firstFour = query(blogRef, orderBy("title"), limit(4));
     const firstFour = query(blogRef, orderBy("timestamp", "desc"), limit(4));
+
     // const blogsQuery = query(blogRef, orderBy("title"));
     //const docSnapshot = await getDocs(blogRef);
     const docSnapshot = await getDocs(firstFour);
     setBlogs(docSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+    setMostPopularBlogs(docSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
     setLastVisible(docSnapshot.doc[docSnapshot.docs.length - 1]);
   };
 
@@ -175,7 +179,8 @@ const Home = ({ setActive, user, active }) => {
       try {
         setLoading(true);
         await deleteDoc(doc(db, "blogs", id));
-        toast.success("Image deleted successfully!");
+        toast.success("Blog deleted successfully!");
+        getBlogs();
         setLoading(false);
       } catch (err) {
         console.log(err);
@@ -249,7 +254,7 @@ const Home = ({ setActive, user, active }) => {
             <div className="blog-heading text-start py-2 mb-4">Tags</div>
             <Tags tags={tags} />
             <Category catgBlogsCount={categoryCount}/>
-            <FeatureBlogs title={"Most Popular"} blogs={blogs} />
+            <FeatureBlogs title={"Most Popular"} blogs={mostPopularBlogs} />
           </div>
         </div>
       </div>
