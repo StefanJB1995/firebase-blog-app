@@ -33,13 +33,17 @@ const Auth = ({ setActive, setUser }) => {
     e.preventDefault();
     if (!signUp) {
       if (email && password) {
-        const { user } = await signInWithEmailAndPassword(
-          auth,
-          email,
-          password
-        );
-        setUser(user);
-        setActive("home");
+        try {
+          const { user } = await signInWithEmailAndPassword(
+            auth,
+            email,
+            password
+          );
+          setUser(user);
+          setActive("home");
+        } catch (err) {
+          return toast.error("Invalid email or password.");
+        }
       } else {
         return toast.error("All fields are mandatory to fill!!");
       }

@@ -93,7 +93,8 @@ const Home = ({ setActive, user, active }) => {
 
   const getBlogs = async () => {
     const blogRef = collection(db, "blogs");
-    const firstFour = query(blogRef, orderBy("title"), limit(4));
+    //const firstFour = query(blogRef, orderBy("title"), limit(4));
+    const firstFour = query(blogRef, orderBy("timestamp", "desc"), limit(4));
     // const blogsQuery = query(blogRef, orderBy("title"));
     //const docSnapshot = await getDocs(blogRef);
     const docSnapshot = await getDocs(firstFour);
