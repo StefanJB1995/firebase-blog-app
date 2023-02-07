@@ -8,7 +8,7 @@ const UserComments = ({ name, body, createdAt, msg }) => {
           <div className="comments-list">
             <div className="media">
               {msg ? (
-                <h4>{msg}</h4>
+                <h4 className="mt-5">{msg}</h4>
               ) : (
                 <>
                   <div className="media-left">

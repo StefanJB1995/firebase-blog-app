@@ -21,7 +21,6 @@ import Tags from "../components/Tags";
 import Trending from "../components/Trending";
 import { db } from "../firebase";
 import { useLocation } from "react-router-dom";
-import { async } from "@firebase/util";
 import Category from "../components/Category";
 
 function useQuery() {
@@ -89,6 +88,7 @@ const Home = ({ setActive, user, active }) => {
   useEffect(() => {
     getBlogs();
     setHide(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [active]);
 
   const getBlogs = async () => {
@@ -162,6 +162,7 @@ const Home = ({ setActive, user, active }) => {
       //isNull is from package lodash
       searchBlogs();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery]);
 
   if (loading) {
@@ -210,7 +211,7 @@ const Home = ({ setActive, user, active }) => {
     };
   });
 
-  console.log("catCount", categoryCount);
+  //console.log("catCount", categoryCount);
 
   return (
     <div className="container-fluid pb-4 pt-4 padding">

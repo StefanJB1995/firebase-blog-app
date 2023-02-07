@@ -53,6 +53,7 @@ const Detail = ({ setActive, user }) => {
 
   useEffect(() => {
     id && getBlogDetail();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   if (loading) {

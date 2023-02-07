@@ -1,9 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import transitions from "bootstrap";
 
 const Header = ({ active, setActive, user, handleLogout }) => {
   const userId = user?.uid;
+  const userName = user?.displayName;
   // console.log("userId", userId);
   // console.log("name", user?.displayName);
   return (
@@ -48,7 +48,8 @@ const Header = ({ active, setActive, user, handleLogout }) => {
                     Blogs
                   </li>
                 </Link>
-                <Link to="/create" style={{ textDecoration: "none" }}>
+                {userName === "Stefan JB" ? (
+                  <Link to="/create" style={{ textDecoration: "none" }}>
                   <li
                     className={`nav-item nav-link ${
                       active === "create" ? "active" : ""
@@ -58,6 +59,17 @@ const Header = ({ active, setActive, user, handleLogout }) => {
                     Create
                   </li>
                 </Link>
+                ): ""}
+                {/* <Link to="/create" style={{ textDecoration: "none" }}>
+                  <li
+                    className={`nav-item nav-link ${
+                      active === "create" ? "active" : ""
+                    }`}
+                    onClick={() => setActive("create")}
+                  >
+                    Create
+                  </li>
+                </Link> */}
                 <Link to="/about" style={{ textDecoration: "none" }}>
                   <li
                     className={`nav-item nav-link ${

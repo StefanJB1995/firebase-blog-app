@@ -5,7 +5,7 @@ import BlogSection from "../components/BlogSection";
 import Spinner from "../components/Spinner";
 import { db } from "../firebase";
 
-const TagBlog = () => {
+const TagBlog = ({ setActive }) => {
   const [tagBlogs, setTagBlogs] = useState([]);
   const [loading, setLoading] = useState(false);
   const { tag } = useParams();
@@ -25,6 +25,8 @@ const TagBlog = () => {
 
   useEffect(() => {
     getTagBlogs();
+    setActive(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (loading) {
